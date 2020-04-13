@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -21,6 +22,7 @@ public class Manage {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver");
         driver = new ChromeDriver();
         driver.manage().window().setSize(new Dimension(1280, 720));
+        driver.manage().window().setPosition(new Point(8, 30));
         driver.navigate().to("https:/www.amazon.com");
         try {
             Thread.sleep(1000);
@@ -54,5 +56,15 @@ public class Manage {
         Assertions.assertNotNull(driver.manage().getCookieNamed("test_cookie2"), "Cookie does not exist.");
         driver.manage().deleteCookie(newCookie);
         Assertions.assertNull(driver.manage().getCookieNamed("test_cookie"), "Cookie is not deleted.");
+    }
+
+    @Test
+    public void windowSettings() {
+        Point position = driver.manage().window().getPosition();
+        Assertions.assertEquals(new Point(8, 30), position, "Position of the window is not what expected");
+        Dimension size = driver.manage().window().getSize();
+        Assertions.assertEquals(new Dimension(1280, 720), size, "Size of the window is not what expected");
+        driver.manage().window().fullscreen();
+        driver.manage().window().maximize();
     }
 }
