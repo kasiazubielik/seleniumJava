@@ -15,6 +15,14 @@ import java.util.concurrent.TimeUnit;
 public class InteracringWithWebElementsEx8 {
 
     WebDriver driver;
+    String userName = "kasia";
+    String email = "kasia@fakemail.pl";
+    String incorrectUserName = "kasiaaaa";
+    String incorrectEmail = "kasiaaa@fakemail.pl";
+    String password = "Nastraganiewdzientargowy";
+    String incorrectPassword = "Sezamieotwirzsie";
+    String userDisplayedName = "kasia";
+
 
     @BeforeEach
     public void driverSetUp() {
@@ -35,110 +43,76 @@ public class InteracringWithWebElementsEx8 {
     }
 
     @Test
-    public void existingUsernameCorrectPasswordTest() {
-        String login = "kasia";
-        String password = "Nastraganiewdzientargowy";
-        driver.findElement(By.cssSelector("input#username")).sendKeys(login);
-        driver.findElement(By.cssSelector("input#password")).sendKeys(password);
-        driver.findElement(By.cssSelector("button[name='login']")).click();
-
-        String userDisplayedName = "kasia";
-        String myAccountContent = driver.findElement(By.cssSelector("div.woocommerce-MyAccount-content")).getText();
-        Assertions.assertTrue(myAccountContent.contains(userDisplayedName),
+    public void usernamePasswordTest() {
+        logIn(userName, password);
+        Assertions.assertTrue(getAccountContent().contains(userDisplayedName),
                 "My account page does not contain correct name. Expected name: " + userDisplayedName +
-                        " was not found in a string: " + myAccountContent);
+                        " was not found in a string: " + getAccountContent());
     }
 
     @Test
-    public void existingEmailCorrectPasswordTest() {
-        String login = "kasia@fakemail.pl";
-        String password = "Nastraganiewdzientargowy";
-        driver.findElement(By.cssSelector("input#username")).sendKeys(login);
-        driver.findElement(By.cssSelector("input#password")).sendKeys(password);
-        driver.findElement(By.cssSelector("button[name='login']")).click();
-
-        String userDisplayedName = "kasia";
-        String myAccountContent = driver.findElement(By.cssSelector("div.woocommerce-MyAccount-content")).getText();
-        Assertions.assertTrue(myAccountContent.contains(userDisplayedName),
+    public void emailPasswordTest() {
+        logIn(email, password);
+        Assertions.assertTrue(getAccountContent().contains(userDisplayedName),
                 "My account page does not contain correct name. Expected name: " + userDisplayedName +
-                " was not found in a string: " + myAccountContent);
+                " was not found in a string: " + getAccountContent());
     }
 
     @Test
-    public void unexistingUsernameCorrectPasswordTest() {
-        String login = "kasiaaaa";
-        String password = "Nastraganiewdzientargowy";
-        driver.findElement(By.cssSelector("input#username")).sendKeys(login);
-        driver.findElement(By.cssSelector("input#password")).sendKeys(password);
-        driver.findElement(By.cssSelector("button[name='login']")).click();
-
-        String errorMessageText = driver.findElement(By.cssSelector("ul.woocommerce-error")).getText();
+    public void incorrectUsernamePasswordTest() {
+        logIn(incorrectUserName, password);
         String expectedErrorMessage = "Nieznany użytkownik. Proszę spróbować ponownie lub użyć adresu email.";
-        Assertions.assertEquals(expectedErrorMessage, errorMessageText, "Error message is not correct");
+        Assertions.assertEquals(expectedErrorMessage, getErrorMessageText(), "Error message is not correct");
     }
 
     @Test
-    public void unexistingEmailCorrectPasswordTest() {
-        String login = "kasiaaaa@fakemail.pl";
-        String password = "Nastraganiewdzientargowy";
-        driver.findElement(By.cssSelector("input#username")).sendKeys(login);
-        driver.findElement(By.cssSelector("input#password")).sendKeys(password);
-        driver.findElement(By.cssSelector("button[name='login']")).click();
-
-        String errorMessageText = driver.findElement(By.cssSelector("ul.woocommerce-error")).getText();
+    public void incorrectEmailPasswordTest() {
+        logIn(incorrectEmail, password);
         String expectedErrorMessage = "Nieznany adres email. Proszę sprawdzić ponownie lub wypróbować swoją nazwę użytkownika.";
-        Assertions.assertEquals(expectedErrorMessage, errorMessageText, "Error message is not correct");
+        Assertions.assertEquals(expectedErrorMessage, getErrorMessageText(), "Error message is not correct");
     }
 
     @Test
-    public void existingUsernameInorrectPasswordTest() {
-        String login = "kasia";
-        String password = "Sezamieotworzsie";
-        driver.findElement(By.cssSelector("input#username")).sendKeys(login);
-        driver.findElement(By.cssSelector("input#password")).sendKeys(password);
-        driver.findElement(By.cssSelector("button[name='login']")).click();
-
-        String errorMessageText = driver.findElement(By.cssSelector("ul.woocommerce-error")).getText();
-        String expectedErrorMessage = "Błąd: Wprowadzone hasło dla użytkownika " +  login + " jest niepoprawne. Nie pamiętasz hasła?";
-        Assertions.assertEquals(expectedErrorMessage, errorMessageText, "Error message is not correct");
+    public void usernameIncorrectPasswordTest() {
+        logIn(userName, incorrectPassword);
+        String expectedErrorMessage = "Błąd: Wprowadzone hasło dla użytkownika " +  userName + " jest niepoprawne. Nie pamiętasz hasła?";
+        Assertions.assertEquals(expectedErrorMessage, getErrorMessageText(), "Error message is not correct");
     }
 
     @Test
-    public void existingEmailInorrectPasswordTest() {
-        String login = "kasia@fakemail.pl";
-        String password = "Sezamieotworzsie";
-        driver.findElement(By.cssSelector("input#username")).sendKeys(login);
-        driver.findElement(By.cssSelector("input#password")).sendKeys(password);
-        driver.findElement(By.cssSelector("button[name='login']")).click();
-
-        String errorMessageText = driver.findElement(By.cssSelector("ul.woocommerce-error")).getText();
-        String expectedErrorMessage = "BŁĄD: Dla adresu email " + login + " podano nieprawidłowe hasło. Nie pamiętasz hasła?";
-        Assertions.assertEquals(expectedErrorMessage, errorMessageText, "Error message is not correct");
+    public void emailIncorrectPasswordTest() {
+        logIn(email, incorrectPassword);
+        String expectedErrorMessage = "BŁĄD: Dla adresu email " + email + " podano nieprawidłowe hasło. Nie pamiętasz hasła?";
+        Assertions.assertEquals(expectedErrorMessage, getErrorMessageText(), "Error message is not correct");
     }
 
     @Test
-    public void existingUsernameUnexistingPasswordTest() {
-        String login = "kasia";
-        String password = "";
-        driver.findElement(By.cssSelector("input#username")).sendKeys(login);
-        driver.findElement(By.cssSelector("input#password")).sendKeys(password);
-        driver.findElement(By.cssSelector("button[name='login']")).click();
-
-        String errorMessageText = driver.findElement(By.cssSelector("ul.woocommerce-error")).getText();
-        String expectedErrorMessage = "Błąd: Hasło jest puste.";
-        Assertions.assertEquals(expectedErrorMessage, errorMessageText, "Error message is not correct");
-    }
-
-    @Test
-    public void unexistingUsernameDummyPasswordTest() {
+    public void emptyUsernamePasswordTest() {
         String login = "";
-        String password = "cokolwiek";
-        driver.findElement(By.cssSelector("input#username")).sendKeys(login);
+        logIn(login, password);
+        String expectedErrorMessage = "Błąd: Nazwa użytkownika jest wymagana.";
+        Assertions.assertEquals(expectedErrorMessage, getErrorMessageText(), "Error message is not correct");
+    }
+
+    @Test
+    public void usernameEmptyPasswordTest() {
+        String password = "";
+        logIn(userName, password);
+        String expectedErrorMessage = "Błąd: Hasło jest puste.";
+        Assertions.assertEquals(expectedErrorMessage, getErrorMessageText(), "Error message is not correct");
+    }
+
+    private void logIn(String userName, String password) {
+        driver.findElement(By.cssSelector("input#username")).sendKeys(userName);
         driver.findElement(By.cssSelector("input#password")).sendKeys(password);
         driver.findElement(By.cssSelector("button[name='login']")).click();
+    }
 
-        String errorMessageText = driver.findElement(By.cssSelector("ul.woocommerce-error")).getText();
-        String expectedErrorMessage = "Błąd: Nazwa użytkownika jest wymagana.";
-        Assertions.assertEquals(expectedErrorMessage, errorMessageText, "Error message is not correct");
+    private String getAccountContent() {
+        return driver.findElement(By.cssSelector("div.woocommerce-MyAccount-content")).getText();
+    }
+
+    private String getErrorMessageText() {
+        return driver.findElement(By.cssSelector("ul.woocommerce-error")).getText();
     }
 }

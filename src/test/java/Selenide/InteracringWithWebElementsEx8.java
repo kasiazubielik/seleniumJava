@@ -13,6 +13,14 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class InteracringWithWebElementsEx8 {
 
+    String userName = "kasia";
+    String email = "kasia@fakemail.pl";
+    String incorrectUserName = "kasiaaaa";
+    String incorrectEmail = "kasiaaaa@fakemail.pl";
+    String password = "Nastraganiewdzientargowy";
+    String incorrectPassword = "Sezamieotworzsie";
+    String userDisplayedName = "kasia";
+
     @BeforeEach
     public void driverSetUp() {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver");
@@ -27,114 +35,75 @@ public class InteracringWithWebElementsEx8 {
     }
 
     @Test
-    public void existingUsernameCorrectPasswordTest() {
-        String login = "kasia";
-        String password = "Nastraganiewdzientargowy";
-        $("input#username").setValue(login);
-        $("input#password").setValue(password);
-        $("a.woocommerce-store-notice__dismiss-link").click();
-        $("button[name='login']").click();
-
-        String userDisplayedName = "kasia";
-        SelenideElement myAccountContent = $("div.woocommerce-MyAccount-content");
-        myAccountContent.shouldHave(text(userDisplayedName));
+    public void usernamePasswordTest() {
+        logIn(userName, password);
+        accountContentAssertion();
     }
 
     @Test
-    public void existingEmailCorrectPasswordTest() {
-        String login = "kasia@fakemail.pl";
-        String password = "Nastraganiewdzientargowy";
-        $("input#username").setValue(login);
-        $("input#password").setValue(password);
-        $("a.woocommerce-store-notice__dismiss-link").click();
-        $("button[name='login']").click();
-
-        String userDisplayedName = "kasia";
-        SelenideElement myAccountContent = $("div.woocommerce-MyAccount-content");
-        myAccountContent.shouldHave(text(userDisplayedName));
+    public void emailPasswordTest() {
+        logIn(email, password);
+        accountContentAssertion();
     }
 
     @Test
-    public void unexistingUsernameCorrectPasswordTest() {
-        String login = "kasiaaaa";
-        String password = "Nastraganiewdzientargowy";
-        $("input#username").setValue(login);
-        $("input#password").setValue(password);
-        $("a.woocommerce-store-notice__dismiss-link").click();
-        $("button[name='login']").click();
-
-        SelenideElement errorMessageText = $("ul.woocommerce-error");
+    public void incorrectUsernamePasswordTest() {
+        logIn(incorrectUserName, password);
         String expectedErrorMessage = "Nieznany użytkownik. Proszę spróbować ponownie lub użyć adresu email.";
-        errorMessageText.shouldHave(text(expectedErrorMessage));
+        errorMessageAssertion(expectedErrorMessage);
     }
 
     @Test
-    public void unexistingEmailCorrectPasswordTest() {
-        String login = "kasiaaaa@fakemail.pl";
-        String password = "Nastraganiewdzientargowy";
-        $("input#username").setValue(login);
-        $("input#password").setValue(password);
-        $("a.woocommerce-store-notice__dismiss-link").click();
-        $("button[name='login']").click();
-
-        SelenideElement errorMessageText = $("ul.woocommerce-error");
+    public void incorrectEmailPasswordTest() {
+        logIn(incorrectEmail, password);
         String expectedErrorMessage = "Nieznany adres email. Proszę sprawdzić ponownie lub wypróbować swoją nazwę użytkownika.";
-        errorMessageText.shouldHave(text(expectedErrorMessage));
+        errorMessageAssertion(expectedErrorMessage);
     }
 
     @Test
-    public void existingUsernameInorrectPasswordTest() {
-        String login = "kasia";
-        String password = "Sezamieotworzsie";
-        $("input#username").setValue(login);
-        $("input#password").setValue(password);
-        $("a.woocommerce-store-notice__dismiss-link").click();
-        $("button[name='login']").click();
-
-        SelenideElement errorMessageText = $("ul.woocommerce-error");
-        String expectedErrorMessage = "Błąd: Wprowadzone hasło dla użytkownika " +  login + " jest niepoprawne. Nie pamiętasz hasła?";
-        errorMessageText.shouldHave(text(expectedErrorMessage));
+    public void usernameIncorrectPasswordTest() {
+        logIn(userName, incorrectPassword);
+        String expectedErrorMessage = "Błąd: Wprowadzone hasło dla użytkownika " +  userName + " jest niepoprawne. Nie pamiętasz hasła?";
+        errorMessageAssertion(expectedErrorMessage);
     }
 
     @Test
-    public void existingEmailInorrectPasswordTest() {
-        String login = "kasia@fakemail.pl";
-        String password = "Sezamieotworzsie";
-        $("input#username").setValue(login);
-        $("input#password").setValue(password);
-        $("a.woocommerce-store-notice__dismiss-link").click();
-        $("button[name='login']").click();
-
-        SelenideElement errorMessageText = $("ul.woocommerce-error");
-        String expectedErrorMessage = "BŁĄD: Dla adresu email " + login + " podano nieprawidłowe hasło. Nie pamiętasz hasła?";
-        errorMessageText.shouldHave(text(expectedErrorMessage));
+    public void emailIncorrectPasswordTest() {
+        logIn(email, incorrectPassword);
+        String expectedErrorMessage = "BŁĄD: Dla adresu email " + email + " podano nieprawidłowe hasło. Nie pamiętasz hasła?";
+        errorMessageAssertion(expectedErrorMessage);
     }
 
     @Test
-    public void existingUsernameUnexistingPasswordTest() {
-        String login = "kasia";
-        String password = "";
-        $("input#username").setValue(login);
-        $("input#password").setValue(password);
-        $("a.woocommerce-store-notice__dismiss-link").click();
-        $("button[name='login']").click();
-
-        SelenideElement errorMessageText = $("ul.woocommerce-error");
-        String expectedErrorMessage = "Błąd: Hasło jest puste.";
-        errorMessageText.shouldHave(text(expectedErrorMessage));
-    }
-
-    @Test
-    public void unexistingUsernameDummyPasswordTest() {
-        String login = "";
-        String password = "cokolwiek";
-        $("input#username").setValue(login);
-        $("input#password").setValue(password);
-        $("a.woocommerce-store-notice__dismiss-link").click();
-        $("button[name='login']").click();
-
-        SelenideElement errorMessageText = $("ul.woocommerce-error");
+    public void emptyUsernamePasswordTest() {
+        String userName = "";
+        logIn(userName, password);
         String expectedErrorMessage = "Błąd: Nazwa użytkownika jest wymagana.";
-        errorMessageText.shouldHave(text(expectedErrorMessage));
+        errorMessageAssertion(expectedErrorMessage);
+    }
+
+    @Test
+    public void usernameEmptyPasswordTest() {
+        String password = "";
+        logIn(userName, password);
+        String expectedErrorMessage = "Błąd: Hasło jest puste.";
+        errorMessageAssertion(expectedErrorMessage);
+    }
+
+    private void logIn(String login, String password) {
+        $("input#username").setValue(login);
+        $("input#password").setValue(password);
+        $("a.woocommerce-store-notice__dismiss-link").click();
+        $("button[name='login']").click();
+    }
+
+    private void errorMessageAssertion(String expectedErrorMessage) {
+        SelenideElement getErrorMessage = $("ul.woocommerce-error");
+        getErrorMessage.shouldHave(text(expectedErrorMessage));
+    }
+
+    private void accountContentAssertion() {
+        SelenideElement getAccountContent = $("div.woocommerce-MyAccount-content");
+        getAccountContent.shouldHave(text(userDisplayedName));
     }
 }
