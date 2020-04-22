@@ -48,5 +48,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.jsoup:jsoup:1.11.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:slf4j-simple:1.7.30" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-params:5.2.0" level="project" />
   </component>
 </module>
